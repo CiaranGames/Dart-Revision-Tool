@@ -1,0 +1,336 @@
+[
+  {
+    "question": "What are three elements that you might find in a traceback?",
+    "choices": [
+      "File path, line number, and language version",
+      "File path, syntax error, and exception",
+      "Exception name, line number, and language version",
+      "Function name, language version, and syntax error",
+      "File path, line number, and exception"
+    ],
+    "correct_choices": ["E"]
+  },
+  {
+    "question": "What does 'stepping over' in debugging mean?",
+    "choices": [
+      "To skip the execution of the current line.",
+      "To execute the current line and move to the next.",
+      "To enter a function called in the current line.",
+      "To restart the programme from the beginning.",
+      "To terminate the debugging session.",
+      "To jump to a specific line in the code."
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "Select all the correct statements about static compiled low-level programmes, specifically Dart.",
+    "choices": [
+      "Data types are declared in static languages to prevent out-of-range errors.",
+      "The Dart SDK includes a compiler, debugger, Dart shell, and package manager.",
+      "Every Dart file needs to have a `main` function.",
+      "The Dart compiler throws an error if a value does not match its declared type.",
+      "`~/` is used for integer division as `//` is reserved for comments.",
+      "No need for `{}` in Dart when string interpolating values or variables."
+    ],
+    "correct_choices": ["B", "D", "E"]
+  },
+  {
+    "question": "What are the characteristics of interpreted languages? Select all that apply.",
+    "choices": [
+      "They require an interpreter at runtime.",
+      "They are generally slower than compiled languages.",
+      "They cannot be used for cross-platform application development.",
+      "They are primarily used for scripting or high-level programming.",
+      "We cannot specify data types of variables in interpreted code."
+    ],
+    "correct_choices": ["A", "B", "D"]
+  },
+  {
+    "question": "Which of the following statements about compiled languages is true? Select the correct answer.",
+    "choices": [
+      "The build step for compiled languages is faster than for interpreted languages.",
+      "Compiled code is directly executed by the operating system for faster performance.",
+      "Compiled languages require software that translates and runs code line by line.",
+      "Compiled languages are primarily used for building apps or GUIs.",
+      "Dart can be compiled to JavaScript or a native executable without an interpreter."
+    ],
+    "correct_choices": ["E"]
+  },
+  {
+    "question": "Which of these is a valid way to declare a string variable in Dart? Select all the correct choices.",
+    "choices": [
+      "`string name = \"Ayodeji\";`",
+      "`String name = 'Ayodeji';`",
+      "`var name = Ayodeji;`",
+      "`name = 'Ayodeji';`",
+      "`String name == \"Ayodeji\";`"
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "What is the output of the following Dart code? Select the correct answer.\n```dart\ndouble price = 3.5;\nint amount = 2;\nprint('Total: $${price * amount}');\n```",
+    "choices": [
+      "`Total: $3.5 * 2`",
+      "`Total: $7.0`",
+      "`Total: 7.0`",
+      "`Total: $7`",
+      "`Total: 7`",
+      "`Error`"
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "What will be the output of the following Dart code? Select the correct answer.\n```dart\nint a = 9;\nint b = 2;\na ~/= b;\nb += a;\nprint(a * b);\n```",
+    "choices": [
+      "24",
+      "2",
+      "18",
+      "20",
+      "16"
+    ],
+    "correct_choices": ["A"]
+  },
+  {
+    "question": "The return types of the following functions have not been declared. Select all the correct statements.\n```dart\ngreet() {\n  var age = \"20\";\n  return double.parse(age);\n}\n```\n```dart\nimport 'dart:io';\ngetANumber() {\n  print('Enter a number:');\n  var a = stdin.readLineSync();\n  return a;\n}\n```\n```dart\nimport 'dart:io';\ncheckEven() {\n  print('Enter a number:');\n  int num = int.parse(stdin.readLineSync()!);\n  return num % 2 == 0;\n}\n```\n```dart\nimport 'dart:io';\nprintName() {\n  print('Enter your name:');\n  String? name = stdin.readLineSync();\n  print('Hello, ${name!.toUpperCase()}');\n}\n```\n```dart\ndivideNumbers() {\n  int a = 40;\n  int b = 8;\n  return a / b;\n}\n```\n```dart\nimport 'dart:math';\ncalculateSquareRoot() {\n  int num = 5;\n  return sqrt(num);\n}\n```",
+    "choices": [
+      "`greet` returns a `double`",
+      "`getANumber` returns a `String`",
+      "`checkEven` returns a `bool`",
+      "`printName` returns a `String`",
+      "`divideNumbers` returns an `int`",
+      "`calculateSquareRoot` returns a `double`"
+    ],
+    "correct_choices": ["A", "C", "F"]
+  },
+  {
+    "question": "Select all correct statements about Dart's functions and control flow.",
+    "choices": [
+      "The `void` keyword defines functions that do not return a value.",
+      "`while` loops can only iterate a known number of times.",
+      "Null safety helps prevent creating variables that can be `null`.",
+      "We can cover multiple cases at once in a `switch` statement.",
+      "Adding `{}` around parameters makes them named parameters."
+    ],
+    "correct_choices": ["A", "C", "D", "E"]
+  },
+  {
+    "question": "Given the following function definition, select all correct statements.\n```dart\nvoid greet(String? name) {\n  print(\"Hello, ${name ?? 'stranger'}!\");\n}\n```",
+    "choices": [
+      "`greet();` prints \"Hello, stranger!\"",
+      "`greet(null);` prints \"Hello, stranger!\"",
+      "`greet(3);` prints \"Hello, stranger!\"",
+      "`greet(\"Aya\");` prints \"Hello, Aya!\"",
+      "`greet('')` prints \"Hello, stranger!\"."
+    ],
+    "correct_choices": ["B", "D"]
+  },
+  {
+    "question": "What is the purpose of `List<String> arguments` in the `main` function?",
+    "choices": [
+      "To specify default values for all functions in the programme.",
+      "To pass a fixed number of required arguments to `main`.",
+      "To receive a list of `String`s when `main` is run from other files.",
+      "To receive a list of `String`s when run from the command line."
+    ],
+    "correct_choices": ["D"]
+  },
+  {
+    "question": "Which of the following functions can be converted into an arrow function? Select all that apply.\n```dart\n// A\nvoid printNumber() {\n  print(5);\n}\n\n// B\nint addNumbers(int a, int b) {\n  return a + b;\n}\n\n// C\ndouble circleArea(double radius) {\n  print(\"Calculating...\");\n  return pi * pow(radius, 2);\n}\n\n// D\nString shout(String message) {\n  String loudMessage = message.toUpperCase();\n  return loudMessage;\n}\n\n// E\nint triple(int x) {\n  int result = x * 3;\n  return result;\n}\n```",
+    "choices": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "correct_choices": ["A", "B"]
+  },
+  {
+    "question": "What will this programme print given `x = 12` and `y = 21`? Select the correct answer.\n```dart\nif (x > y) {\n  print(1);\n} else if (x < y) {\n  if (x != 10 && y == 20) {\n    print(2);\n  } else {\n    print(3);\n  }\n} else {\n  print(4);\n}\n```",
+    "choices": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "correct_choices": ["C"]
+  },
+  {
+    "question": "What is the value of `a` when this loop terminates? Select the correct answer.\n```dart\nint a = 10;\nwhile (a > 5) {\n  a -= 2;\n}\n```",
+    "choices": [
+      "5",
+      "4",
+      "3",
+      "6"
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "Which for loop correctly prints 100, 80, 60, 40, 20? Select the correct answer.\n```dart\n// A\nfor (int i = 10; i <= 100; i++) {\n  print(i);\n}\n\n// B\nfor (int i = 2; i <= 10; i++) {\n  print(i * 10);\n}\n\n// C\nfor (int i = 2; i <= 10; i = i + 2) {\n  print(i * 10);\n}\n\n// D\nfor (int i = 10; i > 2; i = i - 2) {\n  print(i * 10);\n}\n\n// E\nfor (int i = 100; i >= 0; i -= 20) {\n  print(i);\n}\n\n// F\nfor (int i = 100; i > 0; i = i - 20) {\n  print(i);\n}\n```",
+    "choices": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "correct_choices": ["F"]
+  },
+  {
+    "question": "Select all true statements about Strings, Lists, Sets, and Maps in Dart.",
+    "choices": [
+      "List elements can be modified at runtime but not at compile time.",
+      "In `l = {1: '😎', 2: '🤩'}`, `l[x] = '😍'` creates a new entry if x is not 1 or 2.",
+      "`List<Object> list = [1, 'two', 3.0];` causes an error.",
+      "`remove` on a List removes all occurrences of the element.",
+      "Inserting '🐒' at index 1 of `['🐓', '🐄', '🐖']` gives `['🐓', '🐄', '🐒', '🐖']`.",
+      "A for-in loop over a Set accesses elements in insertion order."
+    ],
+    "correct_choices": ["B", "F"]
+  },
+  {
+    "question": "What is the first step of converting `\"apples_and_pears\"` to `\"applesAndPears\"`?",
+    "choices": [
+      "Use `toUpperCase` on the first letter of the second word.",
+      "Split the string by `\"_\"` into a `List` of substrings.",
+      "Reverse the string by first splitting by `\"\"`.",
+      "Use `contains` to check for underscores.",
+      "Find each word's first letter position with `indexOf`."
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "What is the output of `print('Flutter'.indexOf('t'))`? Select the correct answer.",
+    "choices": [
+      "2",
+      "3",
+      "4",
+      "3 and 4",
+      "2 and 3"
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "Which `String` methods can be used to locate a substring within a `String`? Select all that apply.",
+    "choices": [
+      "`startsWith()`",
+      "`endsWith()`",
+      "`contains()`",
+      "`split()`",
+      "`join()`",
+      "`substring()`"
+    ],
+    "correct_choices": ["A", "B", "C"]
+  },
+  {
+    "question": "Which is the correct way to define a `List` of `String`s in Dart?",
+    "choices": [
+      "`List<String> colours = List<String>('Red', 'Green', 'Blue');`",
+      "`List colours = ['Red', 'Green', 'Blue'];`",
+      "`String[] colours = ['Red', 'Green', 'Blue'];`",
+      "`List<String> colours = List.filled('Red', 'Green', 'Blue');`",
+      "`List<String> colours = ['Red', 'Green', 'Blue'];`"
+    ],
+    "correct_choices": ["E"]
+  },
+  {
+    "question": "Which function correctly adds a given integer to each element and returns the modified list? Select the correct answer.\n```dart\n// A\nList<int> addToList(List<int> list, int addition) {\n  for (int number in list) {\n    number += addition;\n  }\n  return list;\n}\n\n// B\nList<int> addToList(List<int> list, int addition) {\n  for (int element of list) {\n    element = element + addition;\n  }\n  return list;\n}\n\n// C\nList<int> addToList(List<int> list, int addition) {\n  for (int i = 0; i <= list.length; i++) {\n    list[i] += addition;\n  }\n  return list;\n}\n\n// D\nList<int> addToList(List<int> list, int addition) {\n  for (int i = 0; i < list.length; i = i + 1) {\n    list[i] = list[i] + addition;\n  }\n  return list;\n}\n```",
+    "choices": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "correct_choices": ["D"]
+  },
+  {
+    "question": "What will happen if the function below is called with `{'milkshake', 'pizza', 'banana milk', 'cheesy chips'}`?\n```dart\nvoid lactoseIntolerant(Set<String> foods) {\n  for (String food in foods) {\n    if (food.contains('milk')) {\n      foods.remove(food);\n    }\n  }\n  print(foods);\n}\n```",
+    "choices": [
+      "It will print `{'pizza', 'cheesy chips'}`.",
+      "It will print `{'pizza'}`.",
+      "It will print `{'milkshake', 'pizza', 'banana milk', 'cheesy chips'}`.",
+      "An error will occur during the first iteration of the loop.",
+      "The function will enter an infinite loop."
+    ],
+    "correct_choices": ["D"]
+  },
+  {
+    "question": "Which of the following removes the second key-value pair from the `Map` below?\n```dart\nMap<String, int> scores = {'Dhivyah': 90, 'Álvaro': 85};\n```",
+    "choices": [
+      "`scores.delete('Álvaro');`",
+      "`scores.remove('Álvaro');`",
+      "`scores.delete(1);`",
+      "`scores.delete(85);`",
+      "`scores.remove('Álvaro', 85);`",
+      "`scores.remove = scores.last;`"
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "What does the following Dart function print?\n```dart\nvoid checkProduct() {\n  Map<String, double> prices = {\n    'Bread': 1.5,\n    'Milk': 1.0,\n    'Eggs': 2.0,\n  };\n  if (prices.containsKey('Egg')) {\n    print('Eggs cost: ' + prices['Eggs'].toString());\n  }\n}\n```",
+    "choices": [
+      "`Eggs cost: null`",
+      "`Eggs cost: 2.0`",
+      "`Eggs cost: ${2.0}`",
+      "Nothing",
+      "An error occurs"
+    ],
+    "correct_choices": ["D"]
+  },
+  {
+    "question": "Select all the true statements about Object-Oriented Programming (OOP) in Dart.",
+    "choices": [
+      "You need the `new` keyword to create objects in Dart.",
+      "A superclass is declared using `extends`.",
+      "A `Team` class can store players in a `List<Player>` instance variable.",
+      "`user._password` is accessible from another class in the same file.",
+      "Getters and setters in Dart do not have parameter lists."
+    ],
+    "correct_choices": ["B", "C", "D"]
+  },
+  {
+    "question": "Consider the `Phone` class below. Which of the following is the correct way to create a `Phone` object? Select all that apply.\n```dart\nclass Phone {\n  String name;\n  String brand;\n  int memory;\n\n  Phone(this.name, this.brand, {this.memory = 64});\n}\n```",
+    "choices": [
+      "`Phone myPhone = Phone('iPhone 12', 'Apple');`",
+      "`Phone myPhone = Phone('iPhone 12', 'Apple', 64);`",
+      "`var galaxy = Phone('Galaxy S21', 'Samsung', memory: 128);`",
+      "`Phone galaxy = Phone(name: 'Galaxy S21', brand: 'Samsung', memory: 128);`",
+      "`phone galaxy = Phone('Galaxy S21', 'Samsung', memory: 128);`"
+    ],
+    "correct_choices": ["A", "C"]
+  },
+  {
+    "question": "What is the output of the `main` function shown below? Select the correct answer.\n```dart\nclass Rectangle {\n  double width = 0;\n  double height = 0;\n\n  Rectangle(this.width, this.height);\n\n  double getArea() => width * height;\n}\n\nvoid main() {\n  Rectangle myRectangle = Rectangle(3, 4);\n  double area = myRectangle.getArea();\n  print('$area, $myRectangle');\n}\n```",
+    "choices": [
+      "`12, Instance of 'Rectangle'`",
+      "`12.0, Instance of 'Rectangle'`",
+      "`12.0, Rectangle`",
+      "`12, Rectangle object at 0x000001C9081DE9D0`",
+      "`Error: class 'Rectangle' has no instance variable named 'area'.`"
+    ],
+    "correct_choices": ["B"]
+  },
+  {
+    "question": "Suppose the following `BankAccount` class is in `lect18.dart` and imported into `main.dart`. Which of the following statements are true? Select all that apply.\n```dart\nclass BankAccount {\n  String accountNumber;\n  double _balance = 0.0;\n\n  BankAccount(this.accountNumber);\n\n  void deposit(double amount) {\n    _balance += amount;\n  }\n\n  double get balance => _balance;\n}\n```",
+    "choices": [
+      "`deposit` is accessible in `main.dart`.",
+      "`balance` can be read in `main.dart`.",
+      "`balance` can be set in `main.dart`.",
+      "`_balance` can be read in `main.dart`.",
+      "`_balance` can be read in `lect18.dart`."
+    ],
+    "correct_choices": ["A", "B", "E"]
+  },
+  {
+    "question": "Consider the following classes. Which statements are true? Select all that apply.\n```dart\nclass Animal {\n  String name;\n\n  Animal(this.name);\n\n  void eat() => print('$name is eating.');\n\n  String toString() => name;\n}\n\nclass Dog extends Animal {\n  String breed;\n\n  Dog(String name, this.breed) : super(name);\n\n  void bark() => print('Woof!');\n\n  String toString() => '$name the $breed';\n}\n```",
+    "choices": [
+      "Only `Dog` objects have a `name` instance variable.",
+      "All `Dog` objects have a `bark` method.",
+      "`Dog.toString` overrides `Animal.toString`.",
+      "`super` here is used to call the `Animal` constructor.",
+      "`Animal` cannot be instantiated; only `Dog` can be created."
+    ],
+    "correct_choices": ["B", "C", "D"]
+  }
+]
