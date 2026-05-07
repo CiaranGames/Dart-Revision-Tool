@@ -1,6 +1,6 @@
-# Dart Revision Tool
+# Programming 2 Revision Tool
 
-A browser-based quiz app for studying Dart. Runs entirely in the browser with no build step — progress is saved locally via `localStorage`.
+A browser-based quiz app for studying the Programming 2 module. Runs entirely in the browser with no build step — progress is saved locally via `localStorage`.
 
 ## Using the quiz
 
