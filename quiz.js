@@ -1,130 +1,6 @@
 let QUIZ = [];
 const STORAGE_KEY = 'dart-quiz-v2';
 
-// Explanations live here, not in the JSON, so the JSON can be freely replaced.
-// Order must match public_quiz_data.json.
-const EXPLANATIONS = [
-  {
-    explanation: "A traceback typically shows the file path where the error occurred, the line number, and the exception/error type. Language version isn't part of a traceback, and syntax errors are one type of exception, not a separate element.",
-    example: "Unhandled exception:\nFormatException: Invalid radix-10 number (at character 1)\nhello\n^\n\n#0      int._throwFormatException (dart:core-patch/integers_patch.dart:131:5)\n#1      int._parseRadix (dart:core-patch/integers_patch.dart:142:16)\n#2      int.parse (dart:core-patch/integers_patch.dart:107:12)\n#3      main (file:///home/you/project/bin/app.dart:4:19)\n\n# File path: bin/app.dart\n# Line number: 4\n# Exception: FormatException"
-  },
-  {
-    explanation: "'Stepping over' executes the current line in full and moves to the next line, without going inside any function calls. 'Stepping into' is what enters a function.",
-    example: "void main() {\n  int a = 5;\n  int b = greet(a);  // <-- breakpoint here\n  print(b);\n}\n\nint greet(int x) {\n  print('hi');\n  return x * 2;\n}\n\n// 'Step over' on line 3: runs greet() to completion,\n//   stops on `print(b);` — you don't see inside greet.\n// 'Step into' on line 3: jumps INTO greet, stops on `print('hi');`"
-  },
-  {
-    explanation: "Dart files don't *all* need a main function (only entry-point files do), and Dart uses ${} for interpolating expressions but allows bare $varName for simple variables — so 'no need for {}' is true for variables. Statement A confuses static typing with overflow checking.",
-    example: ""
-  },
-  {
-    explanation: "Interpreted languages need an interpreter at runtime (A), are generally slower than compiled (B), and are often used for scripting (D). They CAN be used cross-platform, and many interpreted languages (TypeScript, Python with hints) do allow specifying types.",
-    example: "// Compiled (Dart):           // Interpreted (Python):\n// $ dart compile exe app.dart   $ python app.py\n// $ ./app.exe                   # interpreter reads + runs each line\n//\n// Compiled = translate once, run the binary.\n// Interpreted = need the interpreter every time you run."
-  },
-  {
-    explanation: "Dart can compile to JavaScript or to native machine code, with no interpreter needed. The other statements are wrong: compiled build steps are slower than interpreted, compiled code runs via the OS but isn't 'directly executed' in the way described, and line-by-line translation is interpretation.",
-    example: ""
-  },
-  {
-    explanation: "Only `String name = 'Ayodeji';` is correct. `string` (lowercase) isn't a type, `Ayodeji` without quotes is treated as an identifier, the fourth omits the type/var keyword, and `==` is comparison not assignment.",
-    example: "String name = 'Ayodeji';     // ✓ explicit type\nvar name = 'Ayodeji';        // ✓ inferred (with quotes!)\nfinal name = 'Ayodeji';      // ✓ inferred + can't reassign\n\nstring name = 'Ayodeji';     // ✗ 'string' lowercase isn't a type\nvar name = Ayodeji;          // ✗ no quotes — treated as identifier\nString name == 'Ayodeji';    // ✗ == is comparison, not assignment"
-  },
-  {
-    explanation: "In Dart, `$$` produces a literal `$`, and `${price * amount}` evaluates to `7.0`. So the output is `Total: $7.0`.",
-    example: ""
-  },
-  {
-    explanation: "`a ~/= b` is integer division: 9 ~/ 2 = 4, so a = 4. Then b += a means b = 2 + 4 = 6. Finally a * b = 4 * 6 = 24.",
-    example: ""
-  },
-  {
-    explanation: "`greet` returns `double.parse(...)` → double (A ✓). `getANumber` returns `stdin.readLineSync()` which is `String?` (nullable), not plain String (B ✗). `checkEven` returns a bool comparison (C ✓). `printName` doesn't return anything — it's void (D ✗). `divideNumbers` uses `/` which always returns `double` in Dart, not int (E ✗). `sqrt` returns double (F ✓).",
-    example: ""
-  },
-  {
-    explanation: "`void` does mark non-returning functions (A ✓). While loops can iterate any number of times — known or unknown (B ✗). Null safety prevents accidental null variables (C ✓). Switch cases can fall through / be combined (D ✓). Curly braces around parameters define named parameters (E ✓).",
-    example: "// Multiple cases at once in switch:\nswitch (day) {\n  case 'Sat':\n  case 'Sun':\n    print('Weekend!');\n    break;\n  default:\n    print('Weekday');\n}\n\n// Named parameters with {}:\nvoid greet({String name = 'friend', int age = 0}) {\n  print('Hi $name, age $age');\n}\ngreet(name: 'Aya', age: 30);"
-  },
-  {
-    explanation: "`greet()` won't compile because `name` is a required positional parameter. `greet(3)` won't compile because 3 isn't a String?. `greet('')` prints \"Hello, !\" — empty string isn't null, so the ?? doesn't kick in. Only `greet(null)` and `greet(\"Aya\")` work as described.",
-    example: ""
-  },
-  {
-    explanation: "`List<String> arguments` in main lets you receive command-line arguments as a list of strings when running the Dart program from the terminal.",
-    example: "// In your_program.dart:\nvoid main(List<String> arguments) {\n  print('You passed: $arguments');\n}\n\n// From the terminal:\n// $ dart run your_program.dart hello world 42\n// You passed: [hello, world, 42]"
-  },
-  {
-    explanation: "Arrow functions can only contain a single expression. A is just one statement (`print(5)`) ✓. B is a single return expression ✓. C has two statements. D and E both declare a local variable before returning, which arrow syntax can't express.",
-    example: ""
-  },
-  {
-    explanation: "12 > 21 is false, and 12 < 21 is true, so we enter the else-if branch. Inside: x != 10 is true (12 ≠ 10) but y == 20 is false (y is 21), so the && is false. We hit the inner else and print 3.",
-    example: ""
-  },
-  {
-    explanation: "Iterations: a=10 → 8, 8 → 6, 6 → 4. Now 4 > 5 is false, loop exits. Final value: 4.",
-    example: ""
-  },
-  {
-    explanation: "We need to print 100, 80, 60, 40, 20 — descending by 20. F starts at 100, condition `i > 0`, decrements by 20: prints 100, 80, 60, 40, 20 then stops (0 fails `> 0`). E would also print 0 because of `>= 0`.",
-    example: ""
-  },
-  {
-    explanation: "B is correct: assigning `l[x] = '😍'` where x isn't an existing key creates a new entry. F is correct: Dart's Set preserves insertion order. List elements can be modified at runtime regardless of compile time. `List<Object>` accepts mixed types fine. `remove` only removes the first occurrence. Inserting at index 1 gives ['🐓', '🐒', '🐄', '🐖'].",
-    example: "// Map: assigning a missing key creates an entry\nMap<int, String> l = {1: '😎', 2: '🤩'};\nl[5] = '😍';                    // l is now {1:'😎', 2:'🤩', 5:'😍'}\n\n// List with mixed types via Object — fine!\nList<Object> mixed = [1, 'two', 3.0];   // ✓ no error\n\n// remove() only removes the FIRST occurrence\nList<int> nums = [1, 2, 1, 3];\nnums.remove(1);                  // [2, 1, 3] — second 1 still there\n\n// insert at index 1 shifts the rest right\nList<String> animals = ['🐓', '🐄', '🐖'];\nanimals.insert(1, '🐒');         // ['🐓', '🐒', '🐄', '🐖']"
-  },
-  {
-    explanation: "The first step is splitting on `_` to get the individual words, so you can then process each one (capitalise the first letter of each subsequent word and join them).",
-    example: "String snake = 'apples_and_pears';\n\n// Step 1: split on '_'\nList<String> words = snake.split('_');   // ['apples', 'and', 'pears']\n\n// Step 2: capitalise each word after the first\nString camel = words.first +\n    words.skip(1).map((w) =>\n        w[0].toUpperCase() + w.substring(1)).join();\n// camel == 'applesAndPears'"
-  },
-  {
-    explanation: "'Flutter' has indices F=0, l=1, u=2, t=3, t=4, e=5, r=6. `indexOf('t')` returns the FIRST match, which is index 3.",
-    example: "String s = 'Flutter';\n//          F l u t t e r\n// index:   0 1 2 3 4 5 6\n\ns.indexOf('t');     // 3 — first match\ns.lastIndexOf('t'); // 4 — last match"
-  },
-  {
-    explanation: "`startsWith`, `endsWith`, and `contains` all check for substrings within a String. `split` breaks a string apart, `join` is a List method, and `substring` extracts a portion by index — none of those locate a substring.",
-    example: "String s = 'Hello, Flutter!';\n\ns.startsWith('Hello');    // true\ns.endsWith('!');          // true\ns.contains('Flut');       // true\n\ns.split(',');             // ['Hello', ' Flutter!']  — splits, doesn't locate\ns.substring(7, 14);       // 'Flutter'  — extracts by index, doesn't search"
-  },
-  {
-    explanation: "E is the standard literal syntax. A uses an invalid List constructor, B works but isn't typed (no <String>), C uses Java-style array syntax which doesn't exist in Dart, D misuses List.filled (which takes a length and fill value).",
-    example: ""
-  },
-  {
-    explanation: "D is the only correct version. A modifies a local copy (`number` is a new variable). B uses `of` which isn't valid Dart syntax (it's `in`). C uses `<=` which goes one past the end and crashes with a range error.",
-    example: ""
-  },
-  {
-    explanation: "Modifying a Set (or List) while iterating over it with a for-in loop throws a ConcurrentModificationError on the next iteration. The first iteration starts fine, but `remove` triggers the error when the loop tries to advance.",
-    example: ""
-  },
-  {
-    explanation: "Dart Maps use `remove(key)` to delete an entry by its key. There's no `delete` method, and `remove` only takes one argument (the key).",
-    example: "Map<String, int> scores = {'Dhivyah': 90, 'Álvaro': 85};\n\nscores.remove('Álvaro');     // ✓ removes by key\n// scores is now {'Dhivyah': 90}\n\n// scores.delete(...)         ✗ no such method on Map\n// scores.remove(0)           ✗ Maps don't use indices\n// scores.remove('Álvaro', 85) ✗ remove takes ONLY the key"
-  },
-  {
-    explanation: "The condition checks for `'Egg'` (no s), but the map's key is `'Eggs'`. So `containsKey('Egg')` is false and the if-block never runs — nothing is printed.",
-    example: ""
-  },
-  {
-    explanation: "B ✓: superclasses are declared with `extends`. C ✓: a class can absolutely hold a List of another class as a field. D ✓: in Dart, `_` makes a member library-private, not class-private — within the same file/library it's accessible. A is wrong: Dart doesn't require `new`. E is wrong: getters/setters in Dart are accessed without parentheses but setters DO take a value parameter.",
-    example: "// In Dart, _ makes a member library-private (file-private if it's its own file).\n// Within the SAME file, _password IS accessible from another class:\n\n// user.dart\nclass User {\n  String _password = 'secret';\n}\nclass Admin {\n  void leak(User u) => print(u._password);  // ✓ same library\n}\n\n// extends for inheritance:\nclass Player {}\nclass Goalkeeper extends Player {}\n\n// A class can hold a List of another class:\nclass Team {\n  List<Player> players = [];\n}"
-  },
-  {
-    explanation: "A ✓: positional args provided, memory uses its default. C ✓: named arg `memory:` is correct. B ✗: can't pass memory positionally — it's a named param. D ✗: name and brand are positional, can't use `name:` syntax. E ✗: `phone` (lowercase) isn't a valid type name.",
-    example: ""
-  },
-  {
-    explanation: "`3 * 4 = 12.0` because Dart's `*` on doubles produces a double. The default `toString()` of a class without an override returns `Instance of 'Rectangle'`.",
-    example: ""
-  },
-  {
-    explanation: "A ✓: `deposit` is public. B ✓: the `balance` getter is public. E ✓: within the same library, `_balance` is accessible. C ✗: there's no setter for `balance`. D ✗: `_balance` is library-private and can't be accessed from main.dart since they're separate libraries.",
-    example: "// lect18.dart  (one library)\nclass BankAccount {\n  String accountNumber;\n  double _balance = 0.0;        // library-private\n  BankAccount(this.accountNumber);\n  double get balance => _balance;  // PUBLIC getter\n}\n\n// main.dart  (different library)\nimport 'lect18.dart';\nvoid main() {\n  var a = BankAccount('123');\n  a.deposit(50);              // ✓ public method\n  print(a.balance);           // ✓ public getter\n  // print(a._balance);       ✗ private to lect18.dart\n  // a.balance = 100;         ✗ no setter defined\n}"
-  },
-  {
-    explanation: "B ✓: all Dogs inherit from Animal AND have their own `bark`. C ✓: Dog defines its own toString that overrides the parent's. D ✓: `super(name)` calls the Animal constructor. A ✗: Dog inherits `name` from Animal — both have it. E ✗: Animal can be instantiated; nothing here makes it abstract.",
-    example: ""
-  }
-];
 
 // pData.q[i] = { streak, due, seen, cor } — streak: consecutive correct sessions; due: next-due timestamp (ms)
 let pData;
@@ -180,8 +56,8 @@ function shuffle(arr) {
 
 function letterToIndex(l) { return l.toUpperCase().charCodeAt(0) - 65; }
 
-function normalizeQuestion(q, i) {
-  const exp = EXPLANATIONS[i] || {};
+function normalizeQuestion(q, i, explanations) {
+  const exp = explanations[i] || {};
   return {
     question: q.question,
     choices: q.choices,
@@ -610,9 +486,10 @@ document.addEventListener('keydown', e => {
 });
 
 pData = loadPData();
-fetch('public_quiz_data.json')
-  .then(r => r.json())
-  .then(data => {
-    QUIZ = data.map(normalizeQuestion);
-    render();
-  });
+Promise.all([
+  fetch('public_quiz_data.json').then(r => r.json()),
+  fetch('explanations.json').then(r => r.json()),
+]).then(([questions, explanations]) => {
+  QUIZ = questions.map((q, i) => normalizeQuestion(q, i, explanations));
+  render();
+});

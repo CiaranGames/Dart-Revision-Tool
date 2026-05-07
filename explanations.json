@@ -1,0 +1,122 @@
+[
+  {
+    "explanation": "A traceback typically shows the file path where the error occurred, the line number, and the exception type. Language version isn't part of a traceback, and syntax errors are one type of exception, not a separate element.",
+    "example": "Unhandled exception:\nFormatException: Invalid radix-10 number (at character 1)\nhello\n^\n\n#0      int._throwFormatException (dart:core-patch/integers_patch.dart:131:5)\n#1      int._parseRadix (dart:core-patch/integers_patch.dart:142:16)\n#2      int.parse (dart:core-patch/integers_patch.dart:107:12)\n#3      main (file:///home/you/project/bin/app.dart:4:19)\n\n# File path: bin/app.dart\n# Line number: 4\n# Exception: FormatException"
+  },
+  {
+    "explanation": "'Stepping over' executes the current line in full and moves to the next, without entering any function calls. 'Stepping into' is what enters a function.",
+    "example": "void main() {\n  int a = 5;\n  int b = greet(a);  // <-- breakpoint here\n  print(b);\n}\n\nint greet(int x) {\n  print('hi');\n  return x * 2;\n}\n\n// 'Step over' on line 3: runs greet() to completion,\n//   stops on `print(b);` — you don't see inside greet.\n// 'Step into' on line 3: jumps INTO greet, stops on `print('hi');`"
+  },
+  {
+    "explanation": "A ✗ — static typing prevents type mismatches at compile time, not arithmetic overflow. B ✓ — the Dart SDK bundles a compiler, debugger, interactive shell, and the `pub` package manager. C ✗ — only entry-point files need a `main` function; library files do not. D ✓ — the compiler enforces declared types and rejects mismatches. E ✓ — `//` is reserved for comments, so Dart uses `~/` for integer division. F ✗ — `${}` is required when interpolating expressions; bare `$name` only works for simple variable names.",
+    "example": null
+  },
+  {
+    "explanation": "A ✓ — an interpreter is needed at runtime to translate and execute the code. B ✓ — interpretation adds overhead compared to pre-compiled native code. C ✗ — interpreted languages are widely used cross-platform (Python, JavaScript, etc.). D ✓ — scripting and high-level tasks are a primary use case. E ✗ — many interpreted languages support type annotations (TypeScript, Python with type hints).",
+    "example": "// Compiled (Dart):           // Interpreted (Python):\n// $ dart compile exe app.dart   $ python app.py\n// $ ./app.exe                   # interpreter reads + runs each line\n//\n// Compiled = translate once, run the binary.\n// Interpreted = need the interpreter every time you run."
+  },
+  {
+    "explanation": "Dart can compile to JavaScript or to native machine code with no interpreter needed. The other statements are wrong: compiled build steps are slower than interpreted, compiled code runs via the OS but isn't 'directly executed' in the way described, and line-by-line translation is interpretation.",
+    "example": null
+  },
+  {
+    "explanation": "Only `String name = 'Ayodeji';` is correct. `string` (lowercase) isn't a type in Dart, `Ayodeji` without quotes is treated as an identifier, the fourth option omits the type or `var` keyword, and `==` is comparison not assignment.",
+    "example": "String name = 'Ayodeji';     // ✓ explicit type\nvar name = 'Ayodeji';        // ✓ inferred (with quotes!)\nfinal name = 'Ayodeji';      // ✓ inferred + can't reassign\n\nstring name = 'Ayodeji';     // ✗ 'string' lowercase isn't a type\nvar name = Ayodeji;          // ✗ no quotes — treated as identifier\nString name == 'Ayodeji';    // ✗ == is comparison, not assignment"
+  },
+  {
+    "explanation": "In Dart, `$$` produces a literal `$`, and `${price * amount}` evaluates to `7.0`. So the output is `Total: $7.0`.",
+    "example": null
+  },
+  {
+    "explanation": "`a ~/= b` is integer division: 9 ~/ 2 = 4, so a becomes 4. Then `b += a` means b = 2 + 4 = 6. Finally `a * b` = 4 * 6 = 24.",
+    "example": null
+  },
+  {
+    "explanation": "A ✓ — `greet` returns `double.parse(...)`, which is a `double`. B ✗ — `getANumber` returns `stdin.readLineSync()`, which is `String?` (nullable), not a plain `String`. C ✓ — `checkEven` returns `num % 2 == 0`, a `bool` comparison. D ✗ — `printName` calls `print()` but has no return statement, making it `void`. E ✗ — `/` always returns a `double` in Dart, even when both operands are `int`. F ✓ — `sqrt` from `dart:math` always returns a `double`.",
+    "example": null
+  },
+  {
+    "explanation": "A ✓ — `void` marks functions that don't return a value. B ✗ — `while` loops can iterate an unknown number of times; it's `for` loops that typically have a known count. C ✓ — null safety prevents variables from accidentally holding `null`. D ✓ — multiple `case` labels can share the same body in a `switch` statement. E ✓ — wrapping parameters in `{}` makes them named parameters.",
+    "example": "// Multiple cases at once in switch:\nswitch (day) {\n  case 'Sat':\n  case 'Sun':\n    print('Weekend!');\n    break;\n  default:\n    print('Weekday');\n}\n\n// Named parameters with {}:\nvoid greet({String name = 'friend', int age = 0}) {\n  print('Hi $name, age $age');\n}\ngreet(name: 'Aya', age: 30);"
+  },
+  {
+    "explanation": "A ✗ — `name` is a required positional parameter, so calling `greet()` without an argument won't compile. B ✓ — passing `null` triggers the `??` operator, substituting `'stranger'`. C ✗ — `3` is an `int`, not a `String?`, so this won't compile. D ✓ — `'Aya'` is a non-null string, so it's used directly. E ✗ — an empty string is not `null`, so `??` doesn't trigger and it prints \"Hello, !\".",
+    "example": null
+  },
+  {
+    "explanation": "`List<String> arguments` in `main` lets you receive command-line arguments as a list of strings when running the Dart program from the terminal.",
+    "example": "// In your_program.dart:\nvoid main(List<String> arguments) {\n  print('You passed: $arguments');\n}\n\n// From the terminal:\n// $ dart run your_program.dart hello world 42\n// You passed: [hello, world, 42]"
+  },
+  {
+    "explanation": "A ✓ — `print(5)` is a single expression. B ✓ — `a + b` is a single return expression. C ✗ — has two statements (`print` then `return`). D ✗ — declares a local variable before returning; arrow syntax can't span multiple statements. E ✗ — same issue as D: the variable declaration makes it two statements.",
+    "example": null
+  },
+  {
+    "explanation": "12 > 21 is false, so we skip the first branch. 12 < 21 is true, so we enter the `else if`. Inside: `x != 10` is true but `y == 20` is false (y is 21), so the `&&` is false. We hit the inner `else` and print 3.",
+    "example": null
+  },
+  {
+    "explanation": "Iterations: a = 10 → 8 → 6 → 4. At 4, `4 > 5` is false so the loop exits. Final value: 4.",
+    "example": null
+  },
+  {
+    "explanation": "F starts at 100, condition `i > 0`, decrements by 20: prints 100, 80, 60, 40, 20, then stops when i reaches 0 (which fails `> 0`). E is wrong because `>= 0` would also print 0.",
+    "example": null
+  },
+  {
+    "explanation": "A ✗ — List elements can be modified at runtime; there's no compile-time restriction on mutation. B ✓ — assigning to a missing key in a Map creates a new entry. C ✗ — `List<Object>` accepts mixed types without error. D ✗ — `remove` only deletes the first occurrence of an element. E ✗ — inserting at index 1 shifts existing elements right, giving `['🐓', '🐒', '🐄', '🐖']`, not `['🐓', '🐄', '🐒', '🐖']`. F ✓ — Dart's `Set` preserves insertion order when iterated.",
+    "example": "// Map: assigning a missing key creates an entry\nMap<int, String> l = {1: '😎', 2: '🤩'};\nl[5] = '😍';                    // l is now {1:'😎', 2:'🤩', 5:'😍'}\n\n// List with mixed types via Object — fine!\nList<Object> mixed = [1, 'two', 3.0];   // ✓ no error\n\n// remove() only removes the FIRST occurrence\nList<int> nums = [1, 2, 1, 3];\nnums.remove(1);                  // [2, 1, 3] — second 1 still there\n\n// insert at index 1 shifts the rest right\nList<String> animals = ['🐓', '🐄', '🐖'];\nanimals.insert(1, '🐒');         // ['🐓', '🐒', '🐄', '🐖']"
+  },
+  {
+    "explanation": "The first step is splitting on `_` to get the individual words, so you can then capitalise the first letter of each subsequent word and join them.",
+    "example": "String snake = 'apples_and_pears';\n\n// Step 1: split on '_'\nList<String> words = snake.split('_');   // ['apples', 'and', 'pears']\n\n// Step 2: capitalise each word after the first\nString camel = words.first +\n    words.skip(1).map((w) =>\n        w[0].toUpperCase() + w.substring(1)).join();\n// camel == 'applesAndPears'"
+  },
+  {
+    "explanation": "'Flutter' has indices F=0, l=1, u=2, t=3, t=4, e=5, r=6. `indexOf('t')` returns the first match, which is index 3.",
+    "example": "String s = 'Flutter';\n//          F l u t t e r\n// index:   0 1 2 3 4 5 6\n\ns.indexOf('t');     // 3 — first match\ns.lastIndexOf('t'); // 4 — last match"
+  },
+  {
+    "explanation": "A ✓ — `startsWith` checks if the string begins with a given substring. B ✓ — `endsWith` checks if the string ends with a given substring. C ✓ — `contains` checks if the string includes a given substring anywhere. D ✗ — `split` breaks a string into a list; it doesn't locate a substring. E ✗ — `join` is a `List` method, not a `String` method. F ✗ — `substring` extracts characters by index range; it doesn't search.",
+    "example": "String s = 'Hello, Flutter!';\n\ns.startsWith('Hello');    // true\ns.endsWith('!');          // true\ns.contains('Flut');       // true\n\ns.split(',');             // ['Hello', ' Flutter!']  — splits, doesn't locate\ns.substring(7, 14);       // 'Flutter'  — extracts by index, doesn't search"
+  },
+  {
+    "explanation": "E is the standard literal syntax. A uses an invalid `List` constructor (no positional items), B works but isn't typed (missing `<String>`), C uses Java-style array syntax which doesn't exist in Dart, D misuses `List.filled` which takes a length and a fill value.",
+    "example": null
+  },
+  {
+    "explanation": "D is the only correct version. A modifies a local copy (`number` is a new variable, not a reference to the list element). B uses `of` which isn't valid Dart syntax (the keyword is `in`). C uses `<=` which goes one index past the end and throws a range error.",
+    "example": null
+  },
+  {
+    "explanation": "Modifying a `Set` (or `List`) while iterating it with a for-in loop throws a `ConcurrentModificationError` on the next iteration. The first iteration starts fine, but calling `remove` triggers the error when the loop tries to advance.",
+    "example": null
+  },
+  {
+    "explanation": "Dart Maps use `remove(key)` to delete an entry by its key. There's no `delete` method, and `remove` only takes one argument — the key.",
+    "example": "Map<String, int> scores = {'Dhivyah': 90, 'Álvaro': 85};\n\nscores.remove('Álvaro');     // ✓ removes by key\n// scores is now {'Dhivyah': 90}\n\n// scores.delete(...)          ✗ no such method on Map\n// scores.remove(0)            ✗ Maps don't use indices\n// scores.remove('Álvaro', 85) ✗ remove takes ONLY the key"
+  },
+  {
+    "explanation": "The condition checks for `'Egg'` (no s), but the map's key is `'Eggs'`. So `containsKey('Egg')` is false and the if-block never runs — nothing is printed.",
+    "example": null
+  },
+  {
+    "explanation": "A ✗ — Dart doesn't require the `new` keyword; constructors are called directly. B ✓ — inheritance is declared with `extends`. C ✓ — a class can store a `List` of another class as an instance variable. D ✓ — `_` makes a member library-private, not class-private; it's still accessible anywhere within the same file. E ✗ — getters have no parameter list, but setters do take a value parameter.",
+    "example": "// In Dart, _ makes a member library-private (file-private if it's its own file).\n// Within the SAME file, _password IS accessible from another class:\n\n// user.dart\nclass User {\n  String _password = 'secret';\n}\nclass Admin {\n  void leak(User u) => print(u._password);  // ✓ same library\n}\n\n// extends for inheritance:\nclass Player {}\nclass Goalkeeper extends Player {}\n\n// A class can hold a List of another class:\nclass Team {\n  List<Player> players = [];\n}"
+  },
+  {
+    "explanation": "A ✓ — positional arguments `name` and `brand` are provided; `memory` uses its default of 64. B ✗ — `memory` is a named parameter and can't be passed positionally. C ✓ — named argument `memory: 128` is correct syntax. D ✗ — `name` and `brand` are positional parameters and can't be passed by name. E ✗ — `phone` (lowercase) is not a valid type name in Dart.",
+    "example": null
+  },
+  {
+    "explanation": "`3 * 4 = 12.0` because Dart's `*` on two `double` values produces a `double`. The default `toString()` of a class without an override returns `Instance of 'Rectangle'`.",
+    "example": null
+  },
+  {
+    "explanation": "A ✓ — `deposit` is a public method, accessible from anywhere. B ✓ — `balance` is a public getter, readable from `main.dart`. C ✗ — no setter is defined for `balance`, so it can't be written to. D ✗ — `_balance` is library-private and inaccessible from `main.dart` since it's a separate library. E ✓ — within the same library (`lect18.dart`), `_balance` is accessible.",
+    "example": "// lect18.dart  (one library)\nclass BankAccount {\n  String accountNumber;\n  double _balance = 0.0;        // library-private\n  BankAccount(this.accountNumber);\n  double get balance => _balance;  // PUBLIC getter\n}\n\n// main.dart  (different library)\nimport 'lect18.dart';\nvoid main() {\n  var a = BankAccount('123');\n  a.deposit(50);              // ✓ public method\n  print(a.balance);           // ✓ public getter\n  // print(a._balance);       ✗ private to lect18.dart\n  // a.balance = 100;         ✗ no setter defined\n}"
+  },
+  {
+    "explanation": "A ✗ — `Dog` inherits `name` from `Animal`; both classes have it. B ✓ — all `Dog` objects have `bark` defined directly on the class. C ✓ — `Dog.toString` overrides `Animal.toString`. D ✓ — `super(name)` in the `Dog` constructor calls the `Animal` constructor. E ✗ — `Animal` is a concrete class and can be instantiated directly.",
+    "example": null
+  }
+]
