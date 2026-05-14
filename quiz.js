@@ -19,8 +19,15 @@ function qd(i) {
   return pData.q[i];
 }
 
-const MASTERY = 3;
-const SR_DAYS = [0, 1, 3, 7, 14, 30]; // day interval indexed by streak
+const MASTERY   = 3;
+const SR_DAYS   = [0, 1, 3, 7, 14, 30]; // day interval indexed by streak
+
+const WHATS_NEW_VERSION = 'v2';
+const WHATS_NEW_ITEMS   = [
+  { tag: 'flag',   text: 'Flag any question with <b>⚑</b> (or press <kbd>F</kbd>) — review flagged ones at the end' },
+  { tag: 'skip',   text: 'Skip in test mode — defer a question and come back before finishing' },
+  { tag: 'mobile', text: 'Mobile-friendly — bigger tap targets and stacked layout on phones' },
+];
 
 function srMs(streak) {
   return (SR_DAYS[Math.min(streak, SR_DAYS.length-1)] || 0) * 864e5;
@@ -37,6 +44,9 @@ let reviewing      = false;
 let reviewList     = [];
 let reviewPos      = 0;
 let mode           = null; // 'practice' | 'test' | null
+let sessionFlagged = new Set();
+let testSkipPool   = [];
+let testSkipRound  = false;
 
 function isMulti(q) { return q.correct.length > 1; }
 
@@ -75,7 +85,8 @@ function startSession() {
   queue = [...overdue, ...notDue];
   qPos = 0; retryPool = []; passNum = 0;
   sessionAnswers = {}; pendingSelection = [];
-  sessionDone = false; reviewing = false;
+  sessionDone = false; reviewing = false; sessionFlagged = new Set();
+  testSkipPool = []; testSkipRound = false;
 }
 
 function currentQI() { return queue[qPos]; }
@@ -111,6 +122,19 @@ function advance() {
   render();
 }
 
+function skipQuestion() {
+  testSkipPool.push(currentQI());
+  qPos++;
+  if (qPos >= queue.length) {
+    queue = [...testSkipPool];
+    testSkipPool = [];
+    qPos = 0;
+    testSkipRound = true;
+  }
+  pendingSelection = [];
+  render();
+}
+
 function endSession() {
   sessionDone = true;
   const now = Date.now();
@@ -140,23 +164,46 @@ function render() {
 }
 
 function renderModeSelect(main) {
+  const showWhatsNew = pData.seenWhatsNew !== WHATS_NEW_VERSION;
+  const whatsNewHtml = showWhatsNew ? `
+    <div class="whats-new" id="whats-new">
+      <div class="whats-new-header">
+        <span class="whats-new-label">What's new</span>
+        <button class="dismiss-btn" id="dismiss-new" aria-label="Dismiss">×</button>
+      </div>
+      <ul class="whats-new-list">
+        ${WHATS_NEW_ITEMS.map(i => `<li><span class="wn-tag">${i.tag}</span>${i.text}</li>`).join('')}
+      </ul>
+    </div>` : '';
+
   main.innerHTML = `<div class="card mode-select-card">
     <div class="mode-select-title">Choose your mode</div>
     <div class="mode-options">
-      <div class="mode-card" id="pick-practice">
+      <div class="mode-card" id="pick-practice" tabindex="0" role="button">
         <div class="mode-card-name">Practice</div>
         <div class="mode-card-tag">Spaced repetition</div>
         <div class="mode-card-desc">See feedback and the correct answer after each question. Rate your confidence to schedule reviews.</div>
       </div>
-      <div class="mode-card mode-test" id="pick-test">
+      <div class="mode-card mode-test" id="pick-test" tabindex="0" role="button">
         <div class="mode-card-name">Test</div>
         <div class="mode-card-tag">Exam conditions</div>
         <div class="mode-card-desc">No feedback until you finish. See your score and review all answers at the end.</div>
       </div>
     </div>
+    ${whatsNewHtml}
   </div>`;
-  main.querySelector('#pick-practice').onclick = () => { mode = 'practice'; startSession(); render(); };
-  main.querySelector('#pick-test').onclick     = () => { mode = 'test';     startSession(); render(); };
+
+  ['#pick-practice', '#pick-test'].forEach(id => {
+    const el = main.querySelector(id);
+    const pick = () => { mode = id === '#pick-practice' ? 'practice' : 'test'; startSession(); render(); };
+    el.onclick = pick;
+    el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } };
+  });
+
+  const dismissBtn = main.querySelector('#dismiss-new');
+  if (dismissBtn) {
+    dismissBtn.onclick = () => { pData.seenWhatsNew = WHATS_NEW_VERSION; savePData(); render(); };
+  }
 }
 
 function renderStrip() {
@@ -164,6 +211,7 @@ function renderStrip() {
   strip.innerHTML = '';
 
   if (mode === 'test') {
+    const skippedSet = new Set(testSkipPool);
     queue.forEach((qi, pos) => {
       const cell = document.createElement('div');
       cell.className = 'cell';
@@ -172,7 +220,10 @@ function renderStrip() {
         if (ans) cell.classList.add(ans.correct ? 'correct' : 'wrong');
       } else if (pos === qPos) {
         cell.classList.add('current');
+      } else if (skippedSet.has(qi)) {
+        cell.classList.add('skipped');
       }
+      if (sessionFlagged.has(qi)) cell.classList.add('flagged');
       cell.title = `Q${pos + 1}`;
       strip.appendChild(cell);
     });
@@ -193,6 +244,7 @@ function renderStrip() {
       cell.classList.add('partial');
     }
     if (i === curQI) cell.classList.add('current');
+    if (sessionFlagged.has(i)) cell.classList.add('flagged');
     cell.title = `Q${i+1} · streak ${d.streak}`;
     strip.appendChild(cell);
   });
@@ -209,7 +261,8 @@ function renderMeta() {
   if (!sessionTotal) {
     sessionLine = mode ? 'NEW SESSION' : 'SELECT A MODE';
   } else if (mode === 'test' && !sessionDone) {
-    sessionLine = `<b>${sessionTotal}</b> / ${queue.length} ANSWERED`;
+    const skipInfo = testSkipPool.length ? ` · ${testSkipPool.length} SKIPPED` : '';
+    sessionLine = `<b>${sessionTotal}</b> / ${QUIZ.length} ANSWERED${skipInfo}`;
   } else {
     sessionLine = `<b>${sessionCorrect}</b> / ${sessionTotal} SESSION${phaseTag}`;
   }
@@ -270,10 +323,13 @@ function renderQuestion(main) {
     const isLast = qPos === queue.length - 1 && retryPool.length === 0;
     controlsHtml = `<div class="controls"><button id="next-btn">${isLast ? 'Finish →' : 'Next →'}</button></div>`;
   } else if (mode === 'test') {
-    const isLast = qPos === queue.length - 1;
+    const isLast = qPos === queue.length - 1 && testSkipPool.length === 0;
     controlsHtml = pendingSelection.length > 0
       ? `<div class="controls"><button id="test-next-btn">${isLast ? 'Finish →' : 'Next →'}</button></div>`
-      : `<div class="controls"><button disabled>${hint}</button></div>`;
+      : `<div class="controls">
+          <button disabled>${hint}</button>
+          ${!testSkipRound ? `<button class="ghost" id="skip-btn">Skip →</button>` : ''}
+         </div>`;
   } else if (pendingSelection.length > 0) {
     controlsHtml = `<div class="confidence-bar">
       <span class="conf-label">How confident?</span>
@@ -291,21 +347,38 @@ function renderQuestion(main) {
   const badge = multi
     ? `<span class="badge multi">SELECT ALL</span>`
     : `<span class="badge">SINGLE ANSWER</span>`;
+  const isFlagged = sessionFlagged.has(qi);
+  const flagBtnHtml = `<button class="flag-btn${isFlagged ? ' flagged' : ''}" id="flag-btn" title="${isFlagged ? 'Unflag (F)' : 'Flag for review (F)'}" aria-label="${isFlagged ? 'Remove flag' : 'Flag for review'}">⚑</button>`;
   const retryBanner = passNum > 0
     ? `<div class="retry-banner">Retry round ${passNum} — questions you missed</div>`
     : '';
+  const skipBanner = testSkipRound
+    ? `<div class="skip-banner">Skipped round — answer these to finish</div>`
+    : '';
 
   main.innerHTML = `<div class="card">
-    ${retryBanner}
+    ${retryBanner}${skipBanner}
     <div class="qnum">
       <span>Question ${qPos + 1} of ${queue.length}</span>
-      <div style="display:flex;gap:8px;align-items:center">${streakBadge}${badge}</div>
+      <div style="display:flex;gap:8px;align-items:center">${flagBtnHtml}${streakBadge}${badge}</div>
     </div>
     <div class="question-text">${formatText(q.question)}</div>
     <div class="choices">${choicesHtml}</div>
     ${feedbackHtml}
     ${controlsHtml}
   </div>`;
+
+  const skipBtn = main.querySelector('#skip-btn');
+  if (skipBtn) skipBtn.onclick = skipQuestion;
+
+  const flagBtnEl = main.querySelector('#flag-btn');
+  if (flagBtnEl) {
+    flagBtnEl.onclick = () => {
+      if (sessionFlagged.has(qi)) sessionFlagged.delete(qi);
+      else sessionFlagged.add(qi);
+      render();
+    };
+  }
 
   if (!ans || mode === 'test') {
     main.querySelectorAll('.choice:not(.locked)').forEach(el => {
@@ -337,6 +410,7 @@ function renderSummary(main) {
   const mastered       = QUIZ.filter((_, i) => qd(i).streak >= MASTERY).length;
   const certWrongCount = sessionVals.filter(a => !a.correct && a.confidence === 'certain').length;
   const scoreLabel     = mode === 'test' ? 'Final score' : 'First-pass score';
+  const flaggedAnswered = [...sessionFlagged].filter(i => sessionAnswers[i]);
 
   main.innerHTML = `<div class="card summary">
     <div class="score">${sessionCorrect}<span class="denom">/${sessionTotal}</span></div>
@@ -353,6 +427,7 @@ function renderSummary(main) {
     </div>
     <div class="actions">
       <button id="review-btn">${mode === 'test' ? 'See answers →' : 'Review session'}</button>
+      ${flaggedAnswered.length ? `<button class="secondary" id="review-flagged">⚑ Review flagged (${flaggedAnswered.length})</button>` : ''}
       <button class="secondary" id="new-session">New session</button>
       <button class="ghost" id="reset-all">Reset everything</button>
     </div>
@@ -364,6 +439,14 @@ function renderSummary(main) {
     reviewing  = true;
     render();
   };
+  if (flaggedAnswered.length) {
+    main.querySelector('#review-flagged').onclick = () => {
+      reviewList = flaggedAnswered.sort((a, b) => a - b);
+      reviewPos  = 0;
+      reviewing  = true;
+      render();
+    };
+  }
   main.querySelector('#new-session').onclick = () => { mode = null; render(); };
   main.querySelector('#reset-all').onclick = () => {
     if (confirm('Clear all progress and start over?')) {
@@ -440,7 +523,7 @@ function formatText(text) {
       const cls = lang ? ` class="language-${lang}"` : '';
       return `<pre><code${cls}>${code}</code></pre>`;
     }
-    let out = part.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    let out = part.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
     out = out.replace(/\n/g, '<br>');
     return out;
@@ -474,6 +557,11 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const nb = document.getElementById('next-btn') || document.getElementById('test-next-btn');
     if (nb && !nb.disabled) { nb.click(); return; }
+  }
+
+  if (e.key === 'f' || e.key === 'F') {
+    const fb = document.getElementById('flag-btn');
+    if (fb) { fb.click(); return; }
   }
 
   if (/^[1-9]$/.test(e.key) && !ans) {
