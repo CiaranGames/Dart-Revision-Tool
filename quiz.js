@@ -45,8 +45,8 @@ let reviewList     = [];
 let reviewPos      = 0;
 let mode           = null; // 'practice' | 'test' | null
 let sessionFlagged = new Set();
-let testSkipPool   = [];
-let testSkipRound  = false;
+let skipPool   = [];
+let skipRound  = false;
 
 function isMulti(q) { return q.correct.length > 1; }
 
@@ -86,7 +86,7 @@ function startSession() {
   qPos = 0; retryPool = []; passNum = 0;
   sessionAnswers = {}; pendingSelection = [];
   sessionDone = false; reviewing = false; sessionFlagged = new Set();
-  testSkipPool = []; testSkipRound = false;
+  skipPool = []; skipRound = false;
 }
 
 function currentQI() { return queue[qPos]; }
@@ -123,13 +123,13 @@ function advance() {
 }
 
 function skipQuestion() {
-  testSkipPool.push(currentQI());
+  skipPool.push(currentQI());
   qPos++;
   if (qPos >= queue.length) {
-    queue = [...testSkipPool];
-    testSkipPool = [];
+    queue = [...skipPool];
+    skipPool = [];
     qPos = 0;
-    testSkipRound = true;
+    skipRound = true;
   }
   pendingSelection = [];
   render();
@@ -211,7 +211,7 @@ function renderStrip() {
   strip.innerHTML = '';
 
   if (mode === 'test') {
-    const skippedSet = new Set(testSkipPool);
+    const skippedSet = new Set(skipPool);
     queue.forEach((qi, pos) => {
       const cell = document.createElement('div');
       cell.className = 'cell';
@@ -230,7 +230,8 @@ function renderStrip() {
     return;
   }
 
-  const curQI = queue.length && !sessionDone ? currentQI() : -1;
+  const curQI     = queue.length && !sessionDone ? currentQI() : -1;
+  const skippedSet = new Set(skipPool);
   QUIZ.forEach((_, i) => {
     const cell = document.createElement('div');
     cell.className = 'cell';
@@ -243,7 +244,8 @@ function renderStrip() {
     } else if (d.streak > 0) {
       cell.classList.add('partial');
     }
-    if (i === curQI) cell.classList.add('current');
+    if (i === curQI)           cell.classList.add('current');
+    if (skippedSet.has(i))     cell.classList.add('skipped');
     if (sessionFlagged.has(i)) cell.classList.add('flagged');
     cell.title = `Q${i+1} · streak ${d.streak}`;
     strip.appendChild(cell);
@@ -261,10 +263,11 @@ function renderMeta() {
   if (!sessionTotal) {
     sessionLine = mode ? 'NEW SESSION' : 'SELECT A MODE';
   } else if (mode === 'test' && !sessionDone) {
-    const skipInfo = testSkipPool.length ? ` · ${testSkipPool.length} SKIPPED` : '';
+    const skipInfo = skipPool.length ? ` · ${skipPool.length} SKIPPED` : '';
     sessionLine = `<b>${sessionTotal}</b> / ${QUIZ.length} ANSWERED${skipInfo}`;
   } else {
-    sessionLine = `<b>${sessionCorrect}</b> / ${sessionTotal} SESSION${phaseTag}`;
+    const skipTag = skipPool.length ? ` · ${skipPool.length} SKIPPED` : '';
+    sessionLine = `<b>${sessionCorrect}</b> / ${sessionTotal} SESSION${phaseTag}${skipTag}`;
   }
   document.getElementById('meta').innerHTML =
     `<b>${mastered}</b> / ${QUIZ.length} MASTERED${modePill}<br>${sessionLine}`;
@@ -323,12 +326,12 @@ function renderQuestion(main) {
     const isLast = qPos === queue.length - 1 && retryPool.length === 0;
     controlsHtml = `<div class="controls"><button id="next-btn">${isLast ? 'Finish →' : 'Next →'}</button></div>`;
   } else if (mode === 'test') {
-    const isLast = qPos === queue.length - 1 && testSkipPool.length === 0;
+    const isLast = qPos === queue.length - 1 && skipPool.length === 0;
     controlsHtml = pendingSelection.length > 0
       ? `<div class="controls"><button id="test-next-btn">${isLast ? 'Finish →' : 'Next →'}</button></div>`
       : `<div class="controls">
           <button disabled>${hint}</button>
-          ${!testSkipRound ? `<button class="ghost" id="skip-btn">Skip →</button>` : ''}
+          ${!skipRound ? `<button class="ghost" id="skip-btn">Skip →</button>` : ''}
          </div>`;
   } else if (pendingSelection.length > 0) {
     controlsHtml = `<div class="confidence-bar">
@@ -338,7 +341,10 @@ function renderQuestion(main) {
       <button class="conf-btn conf-certain" data-conf="certain">Certain</button>
     </div>`;
   } else {
-    controlsHtml = `<div class="controls"><button disabled>${hint}</button></div>`;
+    controlsHtml = `<div class="controls">
+      <button disabled>${hint}</button>
+      ${!skipRound ? `<button class="ghost" id="skip-btn">Skip →</button>` : ''}
+    </div>`;
   }
 
   const streakBadge = d.streak > 0
@@ -352,7 +358,7 @@ function renderQuestion(main) {
   const retryBanner = passNum > 0
     ? `<div class="retry-banner">Retry round ${passNum} — questions you missed</div>`
     : '';
-  const skipBanner = testSkipRound
+  const skipBanner = skipRound
     ? `<div class="skip-banner">Skipped round — answer these to finish</div>`
     : '';
 
